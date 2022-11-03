@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\JWTAuth;
 use App\Models\User;
 
 class UserController extends Controller
@@ -62,5 +63,25 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function disable_user(Request $request)
+    {
+        if (isset($request->id)) {
+            if(User::where('id', $request->id)->exists()) {
+                $token = auth('api')->tokenById($request->id);
+                auth('api')->invalidate($token);
+        
+                $user = User::find($request->id);
+                $user->active = 0;
+                $user->save();
+                return response()->json(['message' => 'Usuário desativado com sucesso']);
+            } else {
+                return response()->json(['message' => 'Usuário não encontrado']);
+            }
+
+        } else {
+            return response()->json(['message' => 'ID não informado']);
+        }
     }
 }

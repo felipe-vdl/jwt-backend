@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\JWTAuth;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -15,7 +16,7 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        $credentials = array_merger($request->only(['email', 'password']), ['active' => 1]);
+        $credentials = array_merge($request->only(['email', 'password']), ['active' => 1]);
 
         if (!$token = auth('api')->attempt($credentials)) {
             return response()->json(['error' => 'Acesso negado'], 401);
@@ -34,6 +35,14 @@ class AuthController extends Controller
         auth('api')->logout();
 
         return response()->json(['message' => 'Logout efetuado com sucesso']);
+    }
+
+    public function invalidate(Request $request)
+    {
+        $token = auth('api')->tokenById($request->id);
+        auth('api')->invalidate($token);
+
+        return response()->json(['message' => 'Token invalidado com sucesso']);
     }
 
     /**

@@ -19,6 +19,7 @@ class UserSeeder extends Seeder
             'name' => 'Felipe Vidal',
             'email' => 'felipe.vidal@mesquita.rj.gov.br',
             'password' => Hash::make('teste123'),
+            'role' => 'Super-Admin'
         ]);
     }
 }

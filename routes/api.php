@@ -9,6 +9,8 @@ Route::post('auth/login', [AuthController::class, "login"]); //->middleware('api
 
 Route::group(['middleware' => ['apiJwt']], function(){
   Route::post('auth/logout', [AuthController::class, "logout"]);
-
+  Route::post('auth/invalidate', [AuthController::class, "invalidate"]);
+  
   Route::get('users', [UserController::class, "index"]);
+  Route::post('users/disable', [UserController::class, "disable_user"]);
 });
