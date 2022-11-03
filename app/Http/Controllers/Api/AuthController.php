@@ -37,14 +37,6 @@ class AuthController extends Controller
         return response()->json(['message' => 'Logout efetuado com sucesso']);
     }
 
-    public function invalidate(Request $request)
-    {
-        $token = auth('api')->tokenById($request->id);
-        auth('api')->invalidate($token);
-
-        return response()->json(['message' => 'Token invalidado com sucesso']);
-    }
-
     /**
      * Get the token array structure.
      *
