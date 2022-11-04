@@ -4,8 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Tymon\JWTAuth\JWTAuth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\User;
+use Carbon;
 
 class AuthController extends Controller
 {
@@ -18,11 +19,26 @@ class AuthController extends Controller
     {
         $credentials = array_merge($request->only(['email', 'password']), ['active' => 1]);
 
-        if (!$token = auth('api')->attempt($credentials)) {
+        if (!auth('api')->attempt($credentials)) {
             return response()->json(['error' => 'Acesso negado'], 401);
         }
 
-        return $this->respondWithToken($token);
+        $token;
+        $multiplicadorMinutos;
+        if ($request->lembrar === false) {
+            $token = auth('api')->attempt($credentials);
+            $multi = 60;
+
+        } else if ($request->lembrar === true) {
+            $token = JWTAuth::attempt($credentials, ['exp' => Carbon\Carbon::now()->addDays(7)->timestamp]);
+            $multi = 10080;
+        }
+
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth('api')->factory()->getTTL() * $multi
+        ]);
     }
 
     /**
@@ -35,21 +51,5 @@ class AuthController extends Controller
         auth('api')->logout();
 
         return response()->json(['message' => 'Logout efetuado com sucesso']);
-    }
-
-    /**
-     * Get the token array structure.
-     *
-     * @param  string $token
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    protected function respondWithToken($token)
-    {
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth('api')->factory()->getTTL() * 60
-        ]);
     }
 }
