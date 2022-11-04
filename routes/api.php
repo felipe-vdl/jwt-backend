@@ -13,4 +13,5 @@ Route::group(['middleware' => ['apiJwt']], function(){
   
   Route::get('users', [UserController::class, "index"]);
   Route::post('users/disable', [UserController::class, "disable_user"]);
+  Route::get('users/me', [UserController::class, "me"]);
 });

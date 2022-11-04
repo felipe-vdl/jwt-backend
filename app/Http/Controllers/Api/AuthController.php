@@ -23,8 +23,8 @@ class AuthController extends Controller
             return response()->json(['error' => 'Acesso negado'], 401);
         }
 
-        $token;
-        $multiplicadorMinutos;
+        $token = null;
+        $multi = null;
         if ($request->lembrar === false) {
             $token = auth('api')->attempt($credentials);
             $multi = 60;
@@ -37,7 +37,8 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth('api')->factory()->getTTL() * $multi
+            'expires_in' => auth('api')->factory()->getTTL() * $multi,
+            'lembrar' => $request->lembrar
         ]);
     }
 

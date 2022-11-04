@@ -39,7 +39,20 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
+        $user = User::find($id);
+        return response()->json($user);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function me()
+    {
+        $user = auth()->user();
+        return response()->json($user);
     }
 
     /**
